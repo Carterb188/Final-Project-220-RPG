@@ -4,13 +4,15 @@ public class Encounter {
     
 
     public Enemy[] enemies;
-    public int maxHp = 0;
+    public int maxHp ;
 
     public Encounter(Enemy[] enemies){
         this.enemies = enemies;
+        this.maxHp = 0;
         for(int i = 0; i < enemies.length; i++){
-            this.maxHp += enemies[i].maxHp;
+           this.maxHp += enemies[i].maxHp;
         }
+       
     }
 
 
@@ -21,7 +23,8 @@ public class Encounter {
     public static Enemy[] enemylist_1_1 = {m1, m2, m3};
 
     public static Encounter encounter_1_1 = new Encounter(enemylist_1_1);
-
+    
+    
    
     static Enemy m4 = new Enemy("Monster #1", 10, 10);
     public static Enemy[] enemylist_2_1 = {m4};

@@ -11,6 +11,9 @@ public abstract class Character {
         this.name = name;
         this.maxHp = maxHp;
         this.hp = maxHp;
+        
+
+        
        
 
     }

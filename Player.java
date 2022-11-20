@@ -36,7 +36,8 @@ public class Player extends Character{
                 System.out.println("You did " + Integer.toString(weapon.damage) +" to yourself!");
             }
 
-            if(weapon.aoe || encounter.enemies.length == 1){
+            Enemy[] avaliableTargets = avaliableTargets(encounter);
+            if(weapon.aoe || avaliableTargets.length == 1){
 
                 for(Enemy enemy: encounter.enemies){
                     enemy.hp -= weapon.damage;
@@ -46,8 +47,8 @@ public class Player extends Character{
             }else{
 
                 String b = "Which Enemy do You Want to Hit?";
-                int choice = GameLogic.readInt(b, encounter.enemies.length);
-                Enemy target = encounter.enemies[choice - 1];
+                int choice = GameLogic.readInt(b, avaliableTargets.length);
+                Enemy target = avaliableTargets[choice - 1];
 
                 target.hp -= weapon.damage;
                 encounter.maxHp -= weapon.damage;
@@ -55,5 +56,17 @@ public class Player extends Character{
             
             
         }
+    }
+
+    public Enemy[] avaliableTargets(Encounter encounter){
+        Enemy[] avaliableTargets = new Enemy[encounter.enemies.length];
+        int index = 0;
+        for(int i = 0; i < encounter.enemies.length; i++){
+            if(encounter.enemies[i].hp > 0){
+                avaliableTargets[index] = encounter.enemies[i];
+                index += 1;
+            }
+        }
+        return avaliableTargets;
     }
 }

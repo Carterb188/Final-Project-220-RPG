@@ -90,13 +90,11 @@ class GameLogic{
 
         do{
             //Setup
-            anythingToContinue();
+            
             clearScreen();
 
 
-            //Display Player HP
-            String playerHealth = String.format("Your hp is %d\n", Main.player.hp);
-            System.out.println(playerHealth);
+           
 
             //Display Enemy HP
             String enemyHealthOutline = "Enemy %d is at %dhp";
@@ -114,6 +112,7 @@ class GameLogic{
 
             //Player Attacks
             Main.player.attack(encounter);
+            System.out.println(Encounter.encounter_1_1.maxHp);
 
 
             //Checks if Enemies are still alive to attack
@@ -127,15 +126,17 @@ class GameLogic{
             }
 
             //Checks to see If we Lost
-            if(checkPlayer()){
+            if(!checkPlayer()){
+                
                 win = false;
                 combat = false;
-                Main.player.hp = Main.player.maxHp;
+                
             }
         }while(combat);
         
         if(win){
             victoryResults();
+            
         }else{
             youLose();
         }
@@ -144,14 +145,21 @@ class GameLogic{
 
     public static Boolean checkEnemies(Encounter encounter){
         if(encounter.maxHp <= 0){
+
+            //Display Player HP
+            String playerHealth = String.format("Your hp is %d\n", Main.player.hp);
+            System.out.println(playerHealth);
+
             return false;
+
         }else{
             return true;
         }
     }
 
     public static Boolean checkPlayer(){
-        if(Main.player.maxHp <= 0){
+        
+        if(Main.player.hp <= 0){
             return false;
         }else{
             return true;
@@ -170,9 +178,9 @@ class GameLogic{
             anythingToContinue();
         }else{
             System.out.println("+1 Coin");
-            System.out.println("Hit Enter to Continue-->>");
         }
         
+        Main.player.hp = Main.player.maxHp;
         anythingToContinue();
         
 
@@ -186,8 +194,10 @@ class GameLogic{
         System.out.println("\n\n\n");
         printHeading("Your Parents are Disapointed in you Player...");
         System.out.println("\n\n\n");
+        anythingToContinue();
     }
 
+    
     
 
 

@@ -1,6 +1,7 @@
 class Enemy extends Character {
     public int damage;
     public int hp;
+    public int maxHp;
     
    
 
@@ -8,6 +9,9 @@ class Enemy extends Character {
         super(name, maxHp);
         this.damage = damage;
         this.hp = maxHp;
+        this.maxHp = maxHp;
+
+       
     }
 
     public void enemyAttack(Player player){

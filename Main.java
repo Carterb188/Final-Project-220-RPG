@@ -5,6 +5,7 @@ class Main
     public static void main(String[] args){
         GameLogic.clearScreen();
         String title = "=<|Dungeon Delvers|>=";
+        System.out.println(Encounter.encounter_1_1.enemies[0].maxHp);
         GameLogic.printHeading(title);
         GameLogic.anythingToContinue();
 

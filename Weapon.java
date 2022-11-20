@@ -16,4 +16,5 @@ public class Weapon{
     public static Weapon sword = new Weapon(4, 1, false, false);
     public static Weapon boomerange = new Weapon(1, 1, true, false);
     public static Weapon greekFire = new Weapon(3, 1, true, true);
+    public static Weapon devNuke = new Weapon(1000, 1, true, false);
 }

@@ -1,6 +1,6 @@
 public class Player extends Character{
 
-    public Weapon[] inventory = {Weapon.sword, Weapon.knife, Weapon.boomerange, Weapon.greekFire};
+    public Weapon[] inventory = {Weapon.sword, Weapon.knife, Weapon.boomerange, Weapon.greekFire, Weapon.devNuke};
     public int hp;
     public int coin;
 
@@ -10,21 +10,9 @@ public class Player extends Character{
         this.coin = 0;
     }
 
-    public void attack(Encounter encounter){
+    public void attack(Encounter encounter,int WeaponChoice, int Enemychoice){
        
-
-        //Create prompt that will give player attack options
-        String a = "Attacks: \n(1)Sword\n(2)Dagger\n(3)Boomerang\n(4)Greek Fire\n";
-
-
-        //Let the player choose an option based on the prompt
-        int chosenAttack = GameLogic.readInt(a, 4);
-        
-
-        //Selected Chosen weapon
-        Weapon weapon = this.inventory[chosenAttack-1];
-
-
+        Weapon weapon = this.inventory[WeaponChoice];
 
         for(int i = 0; i < weapon.numAttacks; i++){
 
@@ -36,8 +24,8 @@ public class Player extends Character{
                 System.out.println("You did " + Integer.toString(weapon.damage) +" to yourself!");
             }
 
-            Enemy[] avaliableTargets = avaliableTargets(encounter);
-            if(weapon.aoe || avaliableTargets.length == 1){
+
+            if(weapon.aoe || encounter.enemies.length == 1){
 
                 for(Enemy enemy: encounter.enemies){
                     enemy.hp -= weapon.damage;
@@ -46,9 +34,9 @@ public class Player extends Character{
                 System.out.println("You did " + Integer.toString(weapon.damage) + " to all enemies!");
             }else{
 
-                String b = "Which Enemy do You Want to Hit?";
-                int choice = GameLogic.readInt(b, avaliableTargets.length);
-                Enemy target = avaliableTargets[choice - 1];
+                
+                Enemy target = encounter.enemies[Enemychoice];
+    
 
                 target.hp -= weapon.damage;
                 encounter.maxHp -= weapon.damage;
@@ -58,15 +46,8 @@ public class Player extends Character{
         }
     }
 
-    public Enemy[] avaliableTargets(Encounter encounter){
-        Enemy[] avaliableTargets = new Enemy[encounter.enemies.length];
-        int index = 0;
-        for(int i = 0; i < encounter.enemies.length; i++){
-            if(encounter.enemies[i].hp > 0){
-                avaliableTargets[index] = encounter.enemies[i];
-                index += 1;
-            }
-        }
-        return avaliableTargets;
-    }
+   
+
+    
+    
 }

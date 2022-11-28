@@ -7,6 +7,7 @@ class GameLogic{
     
     static int currentLevel = 0;
     
+    
     //Create a Scanner Object
     static Scanner scanner = new Scanner(System.in);
 
@@ -293,15 +294,23 @@ class GameLogic{
 
             try{
                 input = Integer.parseInt(scanner.next());
+
+                if(Main.player.inventory[input - 1].locked){
+                    outOfIndex = true;
+                }
+
+                 
+                if(input > Main.player.inventory.length|| (input - 1) < 0){
+                    outOfIndex = true;
+                }
+    
             }catch(Exception e){
                 System.out.println("Please Enter an Integer");
                 notInt = true;
                 input = -1;
             }
 
-            if(input > Main.player.inventory.length){
-                outOfIndex = true;
-            }
+           
         }while(outOfIndex || notInt);
 
         return input - 1;

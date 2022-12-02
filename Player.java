@@ -10,37 +10,39 @@ public class Player extends Character{
         this.coin = 0;
     }
 
-    public void attack(Encounter encounter,int WeaponChoice, int Enemychoice){
+    public void attack(Encounter encounter,int WeaponChoice){
        
+        int enemyChoice;
         Weapon weapon = this.inventory[WeaponChoice];
 
-        for(int i = 0; i < weapon.numAttacks; i++){
-
+        int i = 0;
+        while( i < weapon.numAttacks && encounter.maxHp > 0){
+            i++;
             
+            if(!Main.player.inventory[WeaponChoice].aoe){
 
+                //Chose Enemy if weapon is not aoe
+                enemyChoice =  GameLogic.pickEnemy(encounter);
+            }else{
+                enemyChoice = 0;
+            }
+            
             if(weapon.pain){
-
                 this.hp -= weapon.damage;
                 System.out.println("You did " + Integer.toString(weapon.damage) +" to yourself!");
             }
-
-
             if(weapon.aoe || encounter.enemies.length == 1){
-
                 for(Enemy enemy: encounter.enemies){
                     enemy.hp -= weapon.damage;
                     encounter.maxHp -= weapon.damage;
                 }
                 System.out.println("You did " + Integer.toString(weapon.damage) + " to all enemies!");
             }else{
-
-                
-                Enemy target = encounter.enemies[Enemychoice];
-    
-
+                Enemy target = encounter.enemies[enemyChoice];
                 target.hp -= weapon.damage;
                 encounter.maxHp -= weapon.damage;
                 }
+            
             
             
         }

@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.io.File;  // Import the File class
 
 
 
@@ -6,6 +7,7 @@ class GameLogic{
 
     
     static int currentLevel = 0;
+    static Boolean alive = true;
     
     
     //Create a Scanner Object
@@ -86,43 +88,36 @@ class GameLogic{
 
     public static void combat(Encounter encounter){
         Boolean combat = true;
-        boolean win = false;
         currentLevel +=1;
-        int enemyChoice;
+        
 
         do{
             //Setup
             clearScreen();
-            combatDisplay(encounter);
 
             //Chose Weapon
             int weaponChoice = pickWeapon(encounter);
-            if(!Main.player.inventory[weaponChoice].aoe){
-
-                 //Chose Enemy if weapon is not aoe
-                enemyChoice =  pickEnemy(encounter);
-            }else{
-                enemyChoice = 0;
-            }
            
             //Player Attacks
-            Main.player.attack(encounter, weaponChoice, enemyChoice);
-            System.out.println(Encounter.encounter_1_1.maxHp);
+            Main.player.attack(encounter, weaponChoice);
 
             //Checks if Enemies are still alive to attack
             // if not, Ends combat, sets win to true
             if(checkEnemies(encounter)){
                 for(Enemy enemy: encounter.enemies){
-                    enemy.enemyAttack(Main.player);
+                    if(enemy.hp > 0){
+                        enemy.enemyAttack(Main.player);
+                    }
+                    
                 }
             }else{
-                win = true;
+                alive = true;
                 combat = false;
             }
 
             //Checks to see If we Lost
             if(!checkPlayer()){
-                win = false;
+                alive = false;
                 combat = false;
             }
 
@@ -131,10 +126,10 @@ class GameLogic{
         combatDisplay(encounter);
         anythingToContinue();
 
-        if(win){
-            victoryResults();
-        }else{
+        if(!alive){
             youLose();
+        }else{
+            Main.player.hp = Main.player.maxHp;
         }
     }
 
@@ -200,36 +195,13 @@ class GameLogic{
         }
     }
 
-    public static void victoryResults(){
-        Main.player.coin += 1;
-        clearScreen();
-        System.out.println("Battle Results:");
-        lineBreak(4);
-    
-        System.out.println("You Found A Coin and Added it to Your Pouch");
-        lineBreak(1);
-        
-        if(currentLevel == 1){
-            System.out.println("Save These for Later for Special Items!");
-        }
-        lineBreak(13);
-            
-        
-        
-        Main.player.hp = Main.player.maxHp;
-        anythingToContinue();
-        
-
-
-    }
 
     public static void youLose(){
         
-        System.out.println("\n\n\n");
-        printHeading("YOU DIED");
-        System.out.println("\n\n\n");
-        printHeading("Your Parents are Disapointed in you Player...");
-        System.out.println("\n\n\n");
+        String s = "You Have Perished, Only A Miracule Can Save Your Family Now\n\n\n\n";
+        String s2 = "***********GAMEOVER*************";
+        System.out.println(s);
+        System.out.println(s2);
         anythingToContinue();
     }
 
@@ -242,15 +214,20 @@ class GameLogic{
     public static void displayEnemyHp(Encounter encounter){
 
         //Display Enemy HP
-        String enemyHealthOutline = "Enemy %d is at %dhp";
-        String enemyDeadOutline = "Enemy %d is dead x_x";
+        String enemyHealthOutline = " #%d is at %dhp";
+        String enemyDeadOutline = " #%d is dead x_x";
+        String enemyHealth;
+        String enemyName = "";
         String enemyStatus = "";
         for(int i = 0; i < encounter.enemies.length; i++){
+            enemyName = encounter.enemies[i].name;
             if(encounter.enemies[i].hp > 0){
-                enemyStatus = String.format(enemyHealthOutline, i+1, encounter.enemies[i].hp);
+                enemyHealth = String.format(enemyHealthOutline, i+1, encounter.enemies[i].hp);
+                enemyStatus = enemyName + enemyHealth;
             }else{
-                enemyStatus = String.format(enemyDeadOutline, i+1);
-            }
+                enemyHealth = String.format(enemyDeadOutline, i+1);
+                enemyStatus = enemyName + enemyHealth;
+            }   
              System.out.println(enemyStatus);
          }
     }
@@ -278,10 +255,21 @@ class GameLogic{
         int input;
         boolean outOfIndex = false;
         boolean notInt = false;
-        System.out.println();
+        int weaponNum = 0;
         
+
+        
+
+        for(Weapon weapon: Main.player.inventory){
+            if(!weapon.locked){
+                weaponNum++;
+            }
+        }
+
         do{
+
             combatDisplay(encounter);
+            System.out.println("Which Weapon Do You Want to Attack With?");
 
             if(outOfIndex){
                 System.out.println("Weapon Does Not Exist");
@@ -291,25 +279,31 @@ class GameLogic{
 
             outOfIndex = false;
             notInt = false;
-
-            try{
-                input = Integer.parseInt(scanner.next());
-
-                if(Main.player.inventory[input - 1].locked){
-                    outOfIndex = true;
-                }
-
-                 
-                if(input > Main.player.inventory.length|| (input - 1) < 0){
-                    outOfIndex = true;
+            if(weaponNum > 1){
+                try{
+                    input = Integer.parseInt(scanner.next());
+    
+                    if(Main.player.inventory[input - 1].locked){
+                        outOfIndex = true;
+                    }
+    
+                     
+                    if(input > Main.player.inventory.length|| (input - 1) < 0){
+                        outOfIndex = true;
+                    }
+        
+                }catch(Exception e){
+                    System.out.println("Please Enter an Integer");
+                    notInt = true;
+                    input = -1;
                 }
     
-            }catch(Exception e){
-                System.out.println("Please Enter an Integer");
-                notInt = true;
-                input = -1;
+                
+            }else{
+                input = 1;
             }
 
+            
            
         }while(outOfIndex || notInt);
 
@@ -333,7 +327,7 @@ class GameLogic{
         
 
         System.out.println("Inventory:");
-        String a = "Attacks: \n(1)Sword\n(2)Dagger\n(3)Boomerang\n(4)Greek Fire\n(5)Dev Nuke\n";
+        String a = getWeaponString();
         System.out.println(a);
         System.out.println();   
 
@@ -344,6 +338,55 @@ class GameLogic{
         for(int i = 0; i < n; i++){
             System.out.println();
         }
+    }
+
+    /*printPrompt() - takes a String representing a file name
+    *printPromt() reads through each line and prints it if it is not soley set keywords
+    * 
+    *Key Words:
+    *Padding - adds linebreaks in 
+    */
+    
+    public static void printPrompt(String fileString){
+        int padding = 8;
+
+        File file = new File(fileString);
+        try{
+            Scanner fileScanner = new Scanner(file);
+            boolean read = true;
+            String s;
+            while(read){
+                s = fileScanner.nextLine();
+                if(s.equals("STOP")){
+                    read = false;
+                    fileScanner.close();
+                }else if(s.equals("PAUSE")){
+                    anythingToContinue();
+                }else if(s.equals("CLEAR")){
+                    clearScreen();
+                }else if(s.equals("PADDING")){
+                    for(int i = 0; i < padding; i++)
+                    System.out.println();
+                }else{
+                    System.out.println(s);
+                }
+            }
+        }catch(Exception e){
+            System.out.println("File Not Found");
+        }
+       
+    }
+
+    public static String getWeaponString(){
+        Weapon[] inventory = Main.player.inventory;
+        String list = "";
+        for(int i = 0; i < inventory.length; i++){
+            if(!inventory[i].locked){
+                String s = "(%d)"+inventory[i].name+"\n";
+                list += String.format(s, i+1);
+            }
+        }
+        return list;
     }
 
 }
